@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Magic | Manii✨☺️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Pangolin&display=swap" rel="stylesheet">
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #050505; overflow: hidden; font-family: 'Pangolin', cursive; }
+        
+        #main-wrapper { display: flex; width: 200vw; height: 100vh; transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1); }
+        .section { width: 100vw; height: 100vh; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2; }
+        #container { z-index: 10; text-align: center; color: white; }
+
+        .neon-text { font-family: 'Fredoka One', cursive; font-size: clamp(35px, 9vw, 85px); color: #fff; text-shadow: 0 0 20px #ff4d6d; display: none; }
+        #countdown { font-family: 'Fredoka One', cursive; font-size: 180px; color: #fff; text-shadow: 0 0 30px #ff0055; display: none; }
+
+        #heart-trigger {
+            display: none; font-size: 100px; cursor: pointer;
+            animation: beat 0.8s infinite; transition: 0.3s;
+        }
+        @keyframes beat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        #final-screen { display: none; text-align: center; color: white; animation: fadeIn 1s; }
+        .cat-gif { width: 180px; border-radius: 20px; box-shadow: 0 0 30px #ff4d6d; }
+
+        /* Page 2 Styling */
+        #photo-section { background: linear-gradient(135deg, #fff0f3 0%, #ffc1cf 100%); overflow: hidden;}
+        .heart-float { position: absolute; color: #ff4d6d; font-size: 20px; animation: float 4s infinite linear; opacity: 0.6; z-index: 1; }
+        @keyframes float { from { transform: translateY(100vh); } to { transform: translateY(-10vh); } }
+
+        /* Fixed Polaroid Frame */
+        .polaroid {
+            background: white; 
+            padding: 10px 10px 40px 10px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            transform: rotate(-3deg) translateY(50px); 
+            opacity: 0; 
+            width: 85%; /* Mobile friendly width */
+            max-width: 300px;
+            position: relative; 
+            z-index: 5;
+            border-radius: 4px;
+        }
+        .swipe-active .polaroid { opacity: 1; transform: translateY(0) rotate(-3deg); transition: 0.8s 0.6s; }
+        
+        .polaroid img { 
+            width: 100%; 
+            height: auto; 
+            max-height: 350px;
+            object-fit: contain; /* Is se ab sar nahi katega, puri photo andar ayegi */
+            background: #f9f9f9;
+            border-radius: 2px;
+            display: block;
+        }
+
+        .letter-card {
+            background: rgba(255, 255, 255, 0.9); 
+            max-width: 320px; 
+            padding: 20px; 
+            z-index: 10;
+            border-radius: 20px; 
+            text-align: center; 
+            margin-top: 20px; 
+            opacity: 0; 
+            transition: 1s;
+        }
+        .swipe-active .letter-card { opacity: 1; transition-delay: 1s; }
+
+        .btn-surprise { background: #ff4d6d; color: white; border: none; padding: 12px 30px; font-size: 1.1rem; border-radius: 50px; cursor: pointer; font-family: 'Fredoka One'; margin-top: 15px; }
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+    </style>
+</head>
+<body>
+
+    <div id="main-wrapper">
+        <div class="section" id="page1">
+            <canvas id="matrixCanvas"></canvas>
+            <div class="overlay"></div>
+            <div id="container">
+                <div id="countdown">3</div>
+                <div id="word1" class="neon-text">HAPPY</div>
+                <div id="word2" class="neon-text">BIRTHDAY</div>
+                <div id="word3" class="neon-text">TO</div>
+                <div id="word4" class="neon-text">YOU</div>
+                <div id="word5" class="neon-text">MANII✨☺️</div>
+
+                <div id="heart-trigger" onclick="revealFinal()">❤️
+                    <p style="font-size: 1rem; color: #ff85a2; font-family: 'Pangolin';">Click for surprise, Behna!</p>
+                </div>
+
+                <div id="final-screen">
+                    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueG56bmZ6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/c76IJLufpNwSULPk77/giphy.gif" class="cat-gif">
+                    <h2 style="text-shadow: 0 0 10px #ff4d6d;">Gift Box Unlocked! 🎁</h2>
+                    <button class="btn-surprise" onclick="swipeLeft()">Ab Ye Dekho! ✨</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="photo-section">
+            <div id="hearts-bg"></div>
+            <div class="polaroid">
+                <img src="https://i.postimg.cc/Gtg3JQFZ/Whats-App-Image-2026-02-18-at-12-48-37-PM.jpg" alt="Manii">
+            </div>
+            <div class="letter-card" id="text-card">
+                <h2 style="color: #ff4d6d; margin: 0;">Happy Birthday, Manii✨☺️</h2>
+                <p style="color: #444; font-size: 0.95rem;">Allah meri bhen ko hamesha khush rakhe, har dukh se bachaye aur tumhari har khwaish puri kare. Always keep smiling! 🎂✨</p>
+                <button class="btn-surprise" style="font-size: 0.8rem;" onclick="swipeRight()">Piche Jao</button>
+            </div>
+        </div>
+    </div> 
+
+    <script>
+        // Matrix Background Logic
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const charSet = "HAPPYBIRTHDAYMANII";
+        const fontSize = 18;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(5, 5, 5, 0.2)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = fontSize + "px monospace";
+            for (let i = 0; i < drops.length; i++) {
+                const text = charSet.charAt(Math.floor(Math.random() * charSet.length));
+                ctx.fillStyle = Math.random() > 0.9 ? "#fff" : "#333"; 
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 35);
+
+        const cd = document.getElementById('countdown');
+        const words = ["word1", "word2", "word3", "word4", "word5"];
+        let wordIndex = 0;
+
+        function startLogic() {
+            cd.style.display = 'block';
+            setTimeout(() => { cd.innerText = "2"; }, 1000);
+            setTimeout(() => { cd.innerText = "1"; }, 2000);
+            setTimeout(() => { cd.style.display = 'none'; showWords(); }, 3000);
+        }
+
+        function showWords() {
+            if (wordIndex < words.length) {
+                if (wordIndex > 0) document.getElementById(words[wordIndex-1]).style.display = 'none';
+                document.getElementById(words[wordIndex]).style.display = 'block';
+                wordIndex++;
+                setTimeout(showWords, 1100);
+            } else {
+                document.getElementById(words[wordIndex-1]).style.display = 'none';
+                document.getElementById('heart-trigger').style.display = 'block';
+            }
+        }
+
+        function revealFinal() {
+            document.getElementById('heart-trigger').style.display = 'none';
+            document.getElementById('final-screen').style.display = 'block';
+        }
+
+        function swipeLeft() {
+            document.getElementById('main-wrapper').style.transform = 'translateX(-100vw)';
+            document.getElementById('photo-section').classList.add('swipe-active');
+            createHearts();
+        }
+        function swipeRight() {
+            document.getElementById('main-wrapper').style.transform = 'translateX(0)';
+            document.getElementById('photo-section').classList.remove('swipe-active');
+        }
+
+        function createHearts() {
+            const bg = document.getElementById('hearts-bg');
+            bg.innerHTML = '';
+            for(let i=0; i<15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-float';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                bg.appendChild(heart);
+            }
+        }
+        setTimeout(startLogic, 1000);
+    </script>
+</body>
+</html>
